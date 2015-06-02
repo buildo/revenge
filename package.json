@@ -22,5 +22,15 @@
   "homepage": "https://github.com/buildo/web-framework",
   "devDependencies": {
     "babel": "^5.4.7"
+  },
+  "dependencies": {
+    "cookies-js": "^1.2.1",
+    "debug": "^2.2.0",
+    "eventemitter3": "^1.1.0",
+    "fetch-optimizer": "^0.2.0",
+    "tcomb": "^2.0.0-beta"
+  },
+  "peerDependencies": {
+    "react": "^0.13.3"
   }
 }
