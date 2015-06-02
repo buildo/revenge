@@ -1,0 +1,26 @@
+{
+  "name": "web-framework",
+  "version": "0.0.1",
+  "description": "web-framework aka spyro",
+  "main": "build/index.js",
+  "scripts": {
+    "test": "mocha",
+    "build": "babel --loose --stage 0 --out-dir build src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:buildo/web-framework.git"
+  },
+  "keywords": [
+    "spyro"
+  ],
+  "author": "buildo <we@buildo.io>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/buildo/web-framework/issues"
+  },
+  "homepage": "https://github.com/buildo/web-framework",
+  "devDependencies": {
+    "babel": "^5.4.7"
+  }
+}
