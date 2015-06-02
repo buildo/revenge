@@ -28,7 +28,8 @@
     "debug": "^2.2.0",
     "eventemitter3": "^1.1.0",
     "fetch-optimizer": "^0.2.0",
-    "tcomb": "^2.0.0-beta"
+    "tcomb": "^2.0.0-beta",
+    "tcomb-react": "^0.8.0"
   },
   "peerDependencies": {
     "react": "^0.13.3"
