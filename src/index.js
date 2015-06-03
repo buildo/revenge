@@ -10,4 +10,3 @@ export pure from './decorators/pure';
 export queries from './decorators/queries';
 export skinnable from './decorators/skinnable';
 export autobound from './decorators/autobound';
-export util from './util';
