@@ -6,30 +6,21 @@ import isReactComponent from '../isReactComponent';
 export default function queries(getQueries) {
 
   if (process.env.NODE_ENV !== 'production') {
-    const example = `
-
-Example:
-
-@queries(app => {
-  return {
-    propA: app.queryA(),
-    propB: app.queryB()
-  };
-})
-    `;
-    t.assert(t.Func.is(getQueries), `@queries decorator can only be configured with a function. ${example}`);
+    t.assert(t.Func.is(getQueries), `@queries decorator can only be configured with a function.`);
   }
 
-  return (Component) => {
+  return function (Component) {
 
     if (process.env.NODE_ENV !== 'production') {
+      const name = Component.name;
       t.assert(isReactComponent(Component), `@queries decorator can only be applied to React.Component(s)`);
+      t.assert(!(t.Func.is(Component.getQueries)), `@queries decorator can only be applied to component ${name}, queries are already defined`);
     }
 
-    @listener
+    @listener(QueriesWrapper.prototype.forceUpdate)
     class QueriesWrapper extends React.Component {
 
-      getData() {
+      get() {
         if (process.env.NODE_ENV !== 'production') {
           t.assert(t.Obj.is(this.props.app), `@queries decorator: missing app prop in component ${Component.name}`);
           t.assert(t.Func.is(this.props.router), `@queries decorator: missing router prop in component ${Component.name}`);
@@ -48,7 +39,7 @@ Example:
       }
 
       render() {
-        return <Component {...this.props} {...this.getData()} />;
+        return <Component {...this.props} {...this.get()} />;
       }
 
     }
