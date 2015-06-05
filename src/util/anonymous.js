@@ -1,49 +1,26 @@
-import React from 'react';
 import debug from 'debug';
-import { listener } from 'web-framework';
+import { listener } from '../decorator/listener';
 
 const log = debug('util:@anonymous');
 
-export default function anonymous(homeState?: string) {
+export default function anonymous(Home = 'Home') {
+  return function (Component) {
 
-  const home = homeState || 'Home';
-
-  return function(Component) {
-
-    @listener
-    class AnonymousWrapper extends React.Component {
-
-      static willTransitionTo(transition) {
-        const app = transition.context;
-        if (app.isAuthenticated()) {
-          log(`user is authenticated, redirecting to ${home}...`);
-          transition.redirect(home);
-        }
-      };
-
-      checkAuthentication() {
-        if (this.props.app.isAuthenticated()) {
-          const { nextPath = home } = this.props.router.getCurrentQuery();
-          log('user is authenticated, redirecting to %s...', nextPath);
-          this.props.router.transitionTo(nextPath);
-        }
+    listener(function () {
+      if (this.props.app.isAuthenticated()) {
+        const { nextPath = Home } = this.props.router.getCurrentQuery();
+        log('listening... user is authenticated, redirecting to %s...', nextPath);
+        this.props.router.transitionTo(nextPath);
       }
+    })(Component);
 
-      componentWillReceiveProps() {
-        this.checkAuthentication();
+    Component.willTransitionTo = function (transition) {
+      const app = transition.context;
+      if (app.isAuthenticated()) {
+        log('transition to `%s` aborted (user is authenticated), redirecting to %s...', transition.path, Home);
+        transition.redirect(Home);
       }
+    };
 
-      componentWillMount() {
-        this.checkAuthentication();
-      }
-
-      render() {
-        return <Component {...this.props} />;
-      }
-
-    }
-
-    return AnonymousWrapper;
   };
-
 }
