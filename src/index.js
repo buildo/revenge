@@ -1,5 +1,4 @@
 export t from 'tcomb';
-export PureComponent from './PureComponent';
 export Query from './Query';
 export App from './App';
 export CookieSerializer from './CookieSerializer';

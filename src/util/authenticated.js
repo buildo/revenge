@@ -1,5 +1,5 @@
 import debug from 'debug';
-import { listener } from '../decorator/listener';
+import listener from '../decorators/listener';
 
 const log = debug('util:@authenticated');
 
