@@ -1,6 +1,45 @@
 import t from 'tcomb';
-import shallowEqual from '../shallowEqual';
 import isReactComponent from '../isReactComponent';
+import debug from 'debug';
+
+const log = debug('spyro:@pure');
+
+function stringify(x) {
+  try { // handle "Converting circular structure to JSON" error
+    return JSON.stringify(x);
+  } catch (e) {
+    return String(x);
+  }
+}
+
+function shallowEqual(objA, objB, section, component) {
+  if (objA === objB) {
+    return true;
+  }
+  const displayName = component.constructor.name;
+  const rootNodeID = component._reactInternalInstance._rootNodeID
+  let key;
+  // Test for A's keys different from B.
+  for (key in objA) {
+    if (objA.hasOwnProperty(key) &&
+        (!objB.hasOwnProperty(key) || objA[key] !== objB[key])) {
+      if (process.env.NODE_ENV !== 'production') {
+        log(`component ${displayName} with rootNodeID ${rootNodeID} will re-render since ${section} key ${key} is changed from ${stringify(objA[key])} to ${stringify(objB[key])}`);
+      }
+      return false;
+    }
+  }
+  // Test for B's keys missing from A.
+  for (key in objB) {
+    if (objB.hasOwnProperty(key) && !objA.hasOwnProperty(key)) {
+      if (process.env.NODE_ENV !== 'production') {
+        log(`component ${displayName} with rootNodeID ${rootNodeID} will re-render since ${section} key ${key} with value ${stringify(objB[key])} is new`);
+      }
+      return false;
+    }
+  }
+  return true;
+}
 
 export default function pure(Component) {
 
@@ -10,7 +49,7 @@ export default function pure(Component) {
   }
 
   Component.prototype.shouldComponentUpdate = function (nextProps, nextState) {
-    return !shallowEqual(this.props, nextProps, 'props', this.constructor.name) ||
-           !shallowEqual(this.state, nextState, 'state', this.constructor.name);
+    return !shallowEqual(this.props, nextProps, 'props', this) ||
+           !shallowEqual(this.state, nextState, 'state', this);
   };
 }

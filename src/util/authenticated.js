@@ -1,7 +1,7 @@
 import debug from 'debug';
 import listener from '../decorators/listener';
 
-const log = debug('util:@authenticated');
+const log = debug('spyro:@authenticated');
 
 export default function authenticated(Login = 'Login') {
   return function (Component) {
