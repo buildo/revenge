@@ -1,7 +1,7 @@
 {
-  "name": "web-framework",
+  "name": "revenge",
   "version": "0.0.3",
-  "description": "web-framework aka spyro",
+  "description": "web-framework aka spyro aka revenge",
   "main": "lib",
   "scripts": {
     "test": "mocha",
