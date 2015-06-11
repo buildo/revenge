@@ -5,6 +5,6 @@ const Query = t.struct({
   get: t.Func,
   fetch: t.maybe(t.Func),
   dependencies: t.maybe(t.list(t.Str))
-});
+}, 'Query');
 
 export default Query;
