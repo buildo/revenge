@@ -1,6 +1,6 @@
 {
   "name": "revenge",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "web-framework aka spyro aka revenge",
   "main": "lib",
   "scripts": {
