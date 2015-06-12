@@ -1,7 +1,7 @@
 {
   "name": "revenge",
   "version": "0.1.1",
-  "description": "web-framework aka spyro aka revenge",
+  "description": "revenge framework...best served cold",
   "main": "lib",
   "scripts": {
     "test": "mocha",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:buildo/web-framework.git"
+    "url": "git@github.com:buildo/revenge.git"
   },
   "keywords": [
     "spyro"
@@ -17,9 +17,9 @@
   "author": "buildo <we@buildo.io>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/buildo/web-framework/issues"
+    "url": "https://github.com/buildo/revenge/issues"
   },
-  "homepage": "https://github.com/buildo/web-framework",
+  "homepage": "https://github.com/buildo/revenge",
   "devDependencies": {
     "babel": "^5.4.7",
     "expect": "^1.6.0"
