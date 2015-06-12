@@ -4,6 +4,7 @@ export App from './App';
 export CookieSerializer from './CookieSerializer';
 export isReactComponent from './isReactComponent';
 export listener from './decorators/listener';
+export log from './decorators/log';
 export props from './decorators/props';
 export pure from './decorators/pure';
 export queries from './decorators/queries';
