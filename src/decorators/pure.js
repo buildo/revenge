@@ -1,16 +1,9 @@
 import t from 'tcomb';
 import isReactComponent from '../isReactComponent';
+import stringify from '../stringify';
 import debug from 'debug';
 
-const log = debug('spyro:@pure');
-
-function stringify(x) {
-  try { // handle "Converting circular structure to JSON" error
-    return JSON.stringify(x);
-  } catch (e) {
-    return String(x);
-  }
-}
+const log = debug('revenge:@pure');
 
 function shallowEqual(objA, objB, section, component) {
   if (objA === objB) {

@@ -1,7 +1,7 @@
 import debug from 'debug';
 import listener from '../decorators/listener';
 
-const log = debug('spyro:@anonymous');
+const log = debug('revenge:@anonymous');
 
 export default function anonymous(Home = 'Home') {
   return function (Component) {
