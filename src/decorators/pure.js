@@ -10,7 +10,7 @@ function shallowEqual(objA, objB, section, component) {
     return true;
   }
   const displayName = component.constructor.name;
-  const rootNodeID = component._reactInternalInstance._rootNodeID
+  const rootNodeID = component._reactInternalInstance._rootNodeID;
   let key;
   // Test for A's keys different from B.
   for (key in objA) {

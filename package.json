@@ -5,7 +5,10 @@
   "main": "lib",
   "scripts": {
     "test": "mocha",
-    "build": "rm -rf lib/* && babel --loose --stage 0 --out-dir lib src"
+    "build": "rm -rf lib && mkdir lib && babel --loose --stage 0 --out-dir lib src",
+    "lint": "eslint src",
+    "preversion": "npm run lint && npm run test",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -22,18 +25,22 @@
   "homepage": "https://github.com/buildo/revenge",
   "devDependencies": {
     "babel": "^5.4.7",
-    "expect": "^1.6.0"
+    "babel-eslint": "^3.1.11",
+    "eslint": "^0.23.0",
+    "eslint-plugin-react": "^2.5.2",
+    "expect": "^1.6.0",
+    "require-dir": "^0.3.0"
   },
   "dependencies": {
     "cookies-js": "^1.2.1",
     "debug": "^2.2.0",
     "eventemitter3": "^1.1.0",
     "fetch-optimizer": "^0.2.0",
-    "react-router": "git://github.com/bobpace/react-router.git#transitionContext",
     "tcomb": "^2.0.0-beta",
     "tcomb-react": "^0.8.0"
   },
   "peerDependencies": {
-    "react": "^0.13.3"
+    "react": "^0.13.3",
+    "react-router": "git://github.com/bobpace/react-router.git#transitionContext"
   }
 }
