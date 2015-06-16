@@ -1,12 +1,12 @@
 import assert from 'assert';
-import log from '../src/decorators/log';
+import log from '../../src/decorators/log';
 
 describe('@log decorator', () => {
 
   it('test 1', () => {
 
     class A {
-      @log
+      @log()
       sum(a, b) {
         return a + b;
       }
