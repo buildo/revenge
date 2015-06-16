@@ -25,7 +25,9 @@
   "homepage": "https://github.com/buildo/revenge",
   "devDependencies": {
     "babel": "^5.4.7",
+    "babel-eslint": "^3.1.11",
     "eslint": "^0.23.0",
+    "eslint-plugin-react": "^2.5.2",
     "expect": "^1.6.0"
   },
   "dependencies": {
