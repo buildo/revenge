@@ -41,6 +41,6 @@
   },
   "peerDependencies": {
     "react": "^0.13.3",
-    "react-router": "git://github.com/bobpace/react-router.git#transitionContext"
+    "react-router-transition-context": "^0.13.3"
   }
 }
