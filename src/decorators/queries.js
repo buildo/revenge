@@ -1,12 +1,22 @@
 import React from 'react';
 import t from 'tcomb';
+import assign from 'lodash/object/assign';
+import debug from 'debug';
 import listener from './listener';
+import log from './log';
 import isReactComponent from '../isReactComponent';
 
-export default function queries(getQueries) {
+const Declared = t.list(t.union([
+  t.Str,
+  t.dict(t.Str, t.Str)
+]));
+
+const log = debug('revenge:@queries');
+
+export default function queries(declared) {
 
   if (process.env.NODE_ENV !== 'production') {
-    t.assert(t.Func.is(getQueries), `@queries decorator can only be configured with a function.`);
+    t.assert(Declared.is(declared), `@queries decorator can only be configured with a list of query ids. Optionally rename a single query like this: { propName: queryId }`);
   }
 
   return function (Component) {
@@ -14,28 +24,28 @@ export default function queries(getQueries) {
     if (process.env.NODE_ENV !== 'production') {
       const name = Component.name;
       t.assert(isReactComponent(Component), `@queries decorator can only be applied to React.Component(s)`);
-      t.assert(!(t.Func.is(Component.getQueries)), `@queries decorator can only be applied to component ${name}, queries are already defined`);
+      t.assert(!Component.queries, `@queries decorator can not be applied to component ${name}, queries are already defined`);
     }
 
     @listener(QueriesWrapper.prototype.forceUpdate)
     class QueriesWrapper extends React.Component {
 
+      @log('revenge:@queries');
       get() {
         if (process.env.NODE_ENV !== 'production') {
           t.assert(t.Obj.is(this.props.app), `@queries decorator: missing app prop in component ${Component.name}`);
-          t.assert(t.Func.is(this.props.router), `@queries decorator: missing router prop in component ${Component.name}`);
         }
-        const app = this.props.app;
-        const params = this.props.router.getCurrentParams();
-        const query = this.props.router.getCurrentQuery();
-        const queries = getQueries(app, params, query);
-        const data = {};
-        for (let k in queries) {
-          if (queries[k].get) {
-            data[k] = queries[k].get();
-          }
-        }
-        return data;
+        const data = this.props.app.get();
+
+        return declared.reduce((ac, q) => {
+          const query = t.Str.is(q) ? { q } : q;
+          const { propName } = query;
+          const qId = query[propName];
+
+          return assign(ac, {
+            [propName]: data[qId] || null
+          });
+        }, {});
       }
 
       render() {
@@ -44,7 +54,13 @@ export default function queries(getQueries) {
 
     }
 
-    QueriesWrapper.getQueries = getQueries;
+    QueriesWrapper.queries = declared.reduce((ac, q) => {
+      const query = t.Str.is(q) ? q : q[Object.keys(q)[0]];
+      return assign(ac, {
+        query
+      });
+    }, {});
+    log(`${Component.name} cleaned up queries: %o`, QueriesWrapper.queries);
 
     return QueriesWrapper;
   };
