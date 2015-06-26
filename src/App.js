@@ -2,6 +2,9 @@ import EventEmitter3 from 'eventemitter3';
 import assign from 'lodash/object/assign';
 import t from 'tcomb';
 import Avenger from 'avenger';
+import debug from 'debug';
+
+const log = debug('revenge:App');
 
 export default class App {
 
@@ -34,14 +37,14 @@ export default class App {
       this.qs.off('change');
     }
 
+    const state = { params, query };
+    log(`fetching queries: %o, state: %o`, queries, state);
+
     // TODO(gio): assuming an unique query set per
     // per instance simultaneously
     this.qs = this.avenger.querySet({
       queries,
-      state: {
-        ...params,
-        ...query
-      }
+      state
     });
 
     this.qs.on('change', data => {
