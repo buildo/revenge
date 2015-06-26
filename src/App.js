@@ -1,5 +1,6 @@
 import EventEmitter3 from 'eventemitter3';
 import assign from 'lodash/object/assign';
+import t from 'tcomb';
 import Avenger from 'avenger';
 
 export default class App {
@@ -44,10 +45,10 @@ export default class App {
 
     this.qs.on('change', data => {
       this._get = data;
-      update(() => {});
+      this.update(() => {});
     });
 
-    return qs.run();
+    return this.qs.run();
   }
 
   get() {
