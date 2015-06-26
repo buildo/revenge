@@ -61,6 +61,7 @@ export default function queries(declared) {
       });
     }, {});
     d(`${Component.name} cleaned up queries: %o`, QueriesWrapper.queries);
+    Component.queries = QueriesWrapper.queries;
 
     return QueriesWrapper;
   };
