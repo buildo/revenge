@@ -39,7 +39,8 @@ export default class App {
     this.qs = this.avenger.querySet({
       queries,
       state: {
-        params, query
+        ...params,
+        ...query
       }
     });
 
