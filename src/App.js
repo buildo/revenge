@@ -15,6 +15,11 @@ export default class App {
     this.avenger = new Avenger(queries, cacheInitialState);
   }
 
+  on(event, listener) {
+    this.emitter.on(event, listener);
+    return () => this.emitter.off(event, listener);
+  }
+
   update(f) {
     if (process.env.NODE_ENV !== 'production') {
       t.assert(t.Func.is(f), `${this.constructor.name}.update(f) expects a function`);
