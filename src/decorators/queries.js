@@ -11,7 +11,7 @@ const Declared = t.list(t.union([
   t.dict(t.Str, t.Str)
 ]));
 
-const log = debug('revenge:@queries');
+const d = debug('revenge:@queries');
 
 export default function queries(declared) {
 
@@ -60,7 +60,7 @@ export default function queries(declared) {
         query
       });
     }, {});
-    log(`${Component.name} cleaned up queries: %o`, QueriesWrapper.queries);
+    d(`${Component.name} cleaned up queries: %o`, QueriesWrapper.queries);
 
     return QueriesWrapper;
   };

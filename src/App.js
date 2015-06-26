@@ -1,6 +1,6 @@
 import EventEmitter3 from 'eventemitter3';
 import assign from 'lodash/object/assign';
-import Avenger, { QuerySetInput } from 'avenger';
+import Avenger from 'avenger';
 
 export default class App {
 
