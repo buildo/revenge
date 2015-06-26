@@ -42,7 +42,7 @@ export default class App {
       this.qs.off('change');
     }
 
-    const state = { params, query };
+    const state = { ...params, ...query };
     log(`fetching queries: %o, state: %o`, queries, state);
 
     // TODO(gio): assuming an unique query set per

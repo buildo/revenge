@@ -57,7 +57,7 @@ export default function queries(declared) {
     QueriesWrapper.queries = declared.reduce((ac, q) => {
       const query = t.Str.is(q) ? q : q[Object.keys(q)[0]];
       return assign(ac, {
-        query
+        [query]: true
       });
     }, {});
     d(`${Component.name} cleaned up queries: %o`, QueriesWrapper.queries);
