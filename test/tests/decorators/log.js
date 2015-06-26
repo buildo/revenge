@@ -1,5 +1,5 @@
 import assert from 'assert';
-import log from '../../src/decorators/log';
+import log from '../../../src/decorators/log';
 
 describe('@log decorator', () => {
 
