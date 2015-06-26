@@ -33,6 +33,7 @@ export default class App {
 
     // retrieve all queries
     const queries = routes.reduce((acc, route) => {
+      log(`matching handler ${route.handler.name} queries: %o`, route.handler.queries);
       return route.handler.queries ?
         assign(acc, route.handler.queries) :
         acc;
