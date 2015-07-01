@@ -1,13 +1,25 @@
-import t from 'tcomb';
 import EventEmitter3 from 'eventemitter3';
-import { Poset, optimize } from 'fetch-optimizer';
+import assign from 'lodash/object/assign';
+import t from 'tcomb';
+import Avenger from 'avenger';
+import debug from 'debug';
+
+const log = debug('revenge:App');
 
 export default class App {
 
   static AUTH_KEY = 'AUTH_KEY';
 
-  constructor() {
+  constructor(queries = {}, cacheInitialState = {}) {
+    // TODO(gio): app itself is an emitter.. not needed
+    // except for manual updates in db using update()
     this.emitter = new EventEmitter3();
+    this.avenger = new Avenger(queries, cacheInitialState);
+  }
+
+  on(event, listener) {
+    this.emitter.on(event, listener);
+    return () => this.emitter.off(event, listener);
   }
 
   update(f) {
@@ -19,50 +31,64 @@ export default class App {
     this.emitter.emit('stateDidChange');
   }
 
+  getState() {
+    throw new Error(`App must implement 'getState()'`);
+  }
+
   fetch(routes, params, query): Promise {
 
     // retrieve all queries
     const queries = routes.reduce((acc, route) => {
-      return route.handler.getQueries ?
-        t.mixin(acc, route.handler.getQueries(this, params, query)) :
+      log(`${route.handler.name}: %o %o %o %o`, route, route.handler, route.handler.prototype, route.handler.queries ? route.handler.queries : 'no qs');
+      return route.handler.queries ?
+        assign(acc, route.handler.queries) :
         acc;
     }, {});
 
-    // retrieve fetchers
-    const fetchers = {};
-    for (let prop in queries) {
-      let q = queries[prop];
-      if (q.fetch) {
-        if (process.env.NODE_ENV !== 'production') {
-          t.assert(!fetchers.hasOwnProperty(q.id), `duplicated query id: ${q.id}`);
-        }
-        fetchers[q.id] = q.fetch;
-      }
+    if (this.qs) {
+      this.qs.off('change');
     }
 
-    // retrieve poset
-    const poset = new Poset();
-    for (let prop in queries) {
-      let q = queries[prop];
-      if (q.fetch) {
-        poset.addNode(q.id);
-        if (q.dependencies) {
-          for (let i = 0, len = q.dependencies.length; i < len; i++ ) {
-            if (process.env.NODE_ENV !== 'production') {
-              t.assert(fetchers.hasOwnProperty(q.dependencies[i]), `unknown query id: ${q.dependencies[i]}`);
-            }
-            poset.addEdge(q.id, q.dependencies[i]);
-          }
-        }
-      }
-    }
+    // FIXME(gio): this is totally not safe
+    const state = {
+      ...params,
+      ...query,
+      ...this.getState()
+    };
+    log(`fetching queries: %o, state: %o`, queries, state);
 
-    return optimize(poset, fetchers);
+    if (Object.keys(queries).length === 0) {
+
+      // TODO(gio): hack, empty query set case
+      this._get = {};
+      this.update(() => {});
+      return Promise.resolve({});
+    } else {
+
+      // TODO(gio): assuming an unique query set per
+      // per instance simultaneously
+      this.qs = this.avenger.querySet({
+        queries,
+        state
+      });
+
+      this.qs.on('change', data => {
+        this._get = Object.keys(queries).reduce((ac, qId) => assign(ac, {
+          [qId]: data[qId] && Object.keys(data[qId]).length === 1 && data[qId][qId] ? data[qId][qId] : data[qId] || null
+        }), {});
+        console.info('updated data:', this._get);
+        this.update(() => {});
+      });
+
+      return this.qs.run();
+    }
   }
 
-  on(event, listener) {
-    this.emitter.on(event, listener);
-    return () => this.emitter.off(event, listener);
+  get() {
+    // hack: work around the fact that
+    // @listener and @queries are two distinct entities
+    // listener update event handler already has access to this data
+    return this._get || {};
   }
 
 }
