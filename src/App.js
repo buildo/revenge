@@ -8,6 +8,8 @@ const log = debug('revenge:App');
 
 export default class App {
 
+  static AUTH_KEY = 'AUTH_KEY';
+
   constructor(queries = {}, cacheInitialState = {}) {
     // TODO(gio): app itself is an emitter.. not needed
     // except for manual updates in db using update()
@@ -29,11 +31,15 @@ export default class App {
     this.emitter.emit('stateDidChange');
   }
 
+  getState() {
+    throw new Error(`App must implement 'getState()'`);
+  }
+
   fetch(routes, params, query): Promise {
 
     // retrieve all queries
     const queries = routes.reduce((acc, route) => {
-      log(`matching handler ${route.handler.name} queries: %o`, route.handler.queries);
+      log(`${route.handler.name}: %o %o %o %o`, route, route.handler, route.handler.prototype, route.handler.queries ? route.handler.queries : 'no qs');
       return route.handler.queries ?
         assign(acc, route.handler.queries) :
         acc;
@@ -43,22 +49,39 @@ export default class App {
       this.qs.off('change');
     }
 
-    const state = { ...params, ...query };
+    // FIXME(gio): this is totally not safe
+    const state = {
+      ...params,
+      ...query,
+      ...this.getState()
+    };
     log(`fetching queries: %o, state: %o`, queries, state);
 
-    // TODO(gio): assuming an unique query set per
-    // per instance simultaneously
-    this.qs = this.avenger.querySet({
-      queries,
-      state
-    });
+    if (Object.keys(queries).length === 0) {
 
-    this.qs.on('change', data => {
-      this._get = data;
+      // TODO(gio): hack, empty query set case
+      this._get = {};
       this.update(() => {});
-    });
+      return Promise.resolve({});
+    } else {
 
-    return this.qs.run();
+      // TODO(gio): assuming an unique query set per
+      // per instance simultaneously
+      this.qs = this.avenger.querySet({
+        queries,
+        state
+      });
+
+      this.qs.on('change', data => {
+        this._get = Object.keys(queries).reduce((ac, qId) => assign(ac, {
+          [qId]: data[qId] && Object.keys(data[qId]).length === 1 && data[qId][qId] ? data[qId][qId] : data[qId] || null
+        }), {});
+        console.info('updated data:', this._get);
+        this.update(() => {});
+      });
+
+      return this.qs.run();
+    }
   }
 
   get() {

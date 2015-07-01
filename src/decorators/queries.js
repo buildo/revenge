@@ -38,9 +38,10 @@ export default function queries(declared) {
         const data = this.props.app.get();
 
         return declared.reduce((ac, q) => {
-          const query = t.Str.is(q) ? { q } : q;
-          const { propName } = query;
+          const query = t.Str.is(q) ? { [q]: q } : q;
+          const propName = Object.keys(query)[0];
           const qId = query[propName];
+          console.log(q, query, propName, qId);
 
           return assign(ac, {
             [propName]: data[qId] || null
