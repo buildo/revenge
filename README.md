@@ -1,3 +1,5 @@
+# this README refers to the latest 0.1 version
+
 # Requirements
 
 - React.js
