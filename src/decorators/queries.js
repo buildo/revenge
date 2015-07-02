@@ -3,7 +3,6 @@ import t from 'tcomb';
 import assign from 'lodash/object/assign';
 import debug from 'debug';
 import listener from './listener';
-import log from './log';
 import isReactComponent from '../isReactComponent';
 
 const Declared = t.list(t.union([
@@ -11,7 +10,7 @@ const Declared = t.list(t.union([
   t.dict(t.Str, t.Str)
 ]));
 
-const d = debug('revenge:@queries');
+const log = debug('revenge:@queries');
 
 export default function queries(declared) {
 
@@ -30,7 +29,6 @@ export default function queries(declared) {
     @listener(QueriesWrapper.prototype.forceUpdate)
     class QueriesWrapper extends React.Component {
 
-      @log('revenge:@queries');
       get() {
         if (process.env.NODE_ENV !== 'production') {
           t.assert(t.Obj.is(this.props.app), `@queries decorator: missing app prop in component ${Component.name}`);
@@ -60,7 +58,7 @@ export default function queries(declared) {
         [query]: true
       });
     }, {});
-    d(`${Component.name} cleaned up queries: %o`, QueriesWrapper.queries);
+    log(`${Component.name} cleaned up queries: %o`, QueriesWrapper.queries);
 
     return QueriesWrapper;
   };
