@@ -1,6 +1,7 @@
 export t from 'tcomb';
 export { Query } from 'avenger';
 export App from './App';
+export remote from './remote';
 export CookieSerializer from './CookieSerializer';
 export isReactComponent from './isReactComponent';
 export listener from './decorators/listener';

@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "avenger": "^0.0.10",
+    "axios": "^0.5.4",
     "cookies-js": "^1.2.1",
     "debug": "^2.2.0",
     "eventemitter3": "^1.1.0",
