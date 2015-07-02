@@ -51,10 +51,6 @@ export default class App {
         acc;
     }, {});
 
-    if (this.qs) {
-      this.qs.off('change');
-    }
-
     // FIXME(gio): this is totally not safe
     const state = {
       ...params,
@@ -81,7 +77,15 @@ export default class App {
     }
   }
 
+  setData(data) {
+    this.updateWithData(this.avenger.queries)(data);
+  }
+
   runOrRemote(state, queries) {
+    if (this.qs) {
+      this.qs.off('change');
+    }
+
     // TODO(gio): assuming an unique query set per
     // per instance simultaneously
     this.qs = this.avenger.querySet({
@@ -89,12 +93,16 @@ export default class App {
       state
     });
 
+    const update = this.updateWithData(queries);
+    this.qs.on('change', update);
+
     if (!this.remote) {
       // execute locally
-      this.qs.on('change', this.updateWithData(queries));
-
       return this.qs.run();
     } else {
+      // emit changes for cached values
+      this.qs.cached();
+
       // execute on remote
       const recipe = this.qs.toRecipe();
 
@@ -104,7 +112,7 @@ export default class App {
         // TODO(gio): should update cacheable data caches when back here
         log('data from remote', data);
         return data;
-      }).then(this.updateWithData(queries));
+      }).then(update);
     }
   }
 
