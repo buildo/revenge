@@ -35,6 +35,10 @@ export default class App {
     throw new Error(`App must implement 'getState()'`);
   }
 
+  getCache() {
+    return this.avenger.cache.state;
+  }
+
   fetch(routes, params, query): Promise {
 
     // retrieve all queries

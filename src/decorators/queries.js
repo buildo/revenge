@@ -41,7 +41,6 @@ export default function queries(declared) {
           const query = t.Str.is(q) ? { [q]: q } : q;
           const propName = Object.keys(query)[0];
           const qId = query[propName];
-          console.log(q, query, propName, qId);
 
           return assign(ac, {
             [propName]: data[qId] || null
