@@ -10,11 +10,12 @@ export default class App {
 
   static AUTH_KEY = 'AUTH_KEY';
 
-  constructor(queries = {}, cacheInitialState = {}) {
+  constructor({ queries = {}, cacheInitialState = {}, remote }) {
     // TODO(gio): app itself is an emitter.. not needed
     // except for manual updates in db using update()
     this.emitter = new EventEmitter3();
     this.avenger = new Avenger(queries, cacheInitialState);
+    this.remote = remote;
   }
 
   on(event, listener) {
