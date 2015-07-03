@@ -24,7 +24,7 @@ export default class App {
     // retrieve all queries
     const queries = routes.reduce((acc, route) => {
       return route.handler.getQueries ?
-        t.mixin(acc, route.handler.getQueries(this, params, query)) :
+        t.mixin(acc, route.handler.getQueries(this, params, query), true) :
         acc;
     }, {});
 
