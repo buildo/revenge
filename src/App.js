@@ -80,7 +80,7 @@ export default class App {
         [qId]: data[qId] && Object.keys(data[qId]).length === 1 && data[qId][qId] ? data[qId][qId] : data[qId] || null
       }), {});
       this.update(() => {});
-    }
+    };
   }
 
   runOrRemote(state, queries) {
