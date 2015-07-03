@@ -3,6 +3,7 @@ import assign from 'lodash/object/assign';
 import t from 'tcomb';
 import Avenger from 'avenger';
 import debug from 'debug';
+import axios from 'axios';
 
 const log = debug('revenge:App');
 
@@ -10,11 +11,18 @@ export default class App {
 
   static AUTH_KEY = 'AUTH_KEY';
 
-  constructor(queries = {}, cacheInitialState = {}) {
+  constructor({ queries = {}, data = {}, state = {}, remote }) {
     // TODO(gio): app itself is an emitter.. not needed
     // except for manual updates in db using update()
     this.emitter = new EventEmitter3();
-    this.avenger = new Avenger(queries, cacheInitialState);
+
+    this.remote = remote;
+    this.avenger = new Avenger(queries, data, {
+      queries,
+      state
+    });
+
+    this.updateWithData(this.avenger.queries)(data);
   }
 
   on(event, listener) {
@@ -49,10 +57,6 @@ export default class App {
         acc;
     }, {});
 
-    if (this.qs) {
-      this.qs.off('change');
-    }
-
     // FIXME(gio): this is totally not safe
     const state = {
       ...params,
@@ -62,28 +66,58 @@ export default class App {
     log(`fetching queries: %o, state: %o`, queries, state);
 
     if (Object.keys(queries).length === 0) {
-
       // TODO(gio): hack, empty query set case
-      this._get = {};
-      this.update(() => {});
+      this.updateWithData({})({});
       return Promise.resolve({});
     } else {
+      return this.runOrRemote(state, queries);
+    }
+  }
 
-      // TODO(gio): assuming an unique query set per
-      // per instance simultaneously
-      this.qs = this.avenger.querySet({
-        queries,
-        state
-      });
+  updateWithData(queries) {
+    return data => {
+      this._get = Object.keys(queries).reduce((ac, qId) => assign(ac, {
+        [qId]: data[qId] && Object.keys(data[qId]).length === 1 && data[qId][qId] ? data[qId][qId] : data[qId] || null
+      }), {});
+      this.update(() => {});
+    }
+  }
 
-      this.qs.on('change', data => {
-        this._get = Object.keys(queries).reduce((ac, qId) => assign(ac, {
-          [qId]: data[qId] && Object.keys(data[qId]).length === 1 && data[qId][qId] ? data[qId][qId] : data[qId] || null
-        }), {});
-        this.update(() => {});
-      });
+  runOrRemote(state, queries) {
+    if (this.qs) {
+      this.qs.off('change');
+    }
 
+    // TODO(gio): assuming an unique query set per
+    // per instance simultaneously
+    this.qs = this.avenger.querySet({
+      queries,
+      state
+    });
+
+    const update = this.updateWithData(queries);
+    this.qs.on('change', update);
+
+    if (!this.remote) {
+      // execute locally
       return this.qs.run();
+    } else {
+      // emit changes for cached values
+      this.qs.cached();
+
+      // execute on remote
+      const recipe = this.qs.toRecipe();
+
+      log(`executing recipe on remote ${this.remote}`, recipe);
+
+      return axios.post(this.remote, recipe).then(({ data }) => {
+        this.avenger.patchCache({
+          queries,
+          state
+        }, data);
+        log('data from remote', data);
+        return data;
+      }).then(update);
     }
   }
 
