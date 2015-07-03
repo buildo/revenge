@@ -11,12 +11,18 @@ export default class App {
 
   static AUTH_KEY = 'AUTH_KEY';
 
-  constructor({ queries = {}, cacheInitialState = {}, remote }) {
+  constructor({ queries = {}, data = {}, state = {}, remote }) {
     // TODO(gio): app itself is an emitter.. not needed
     // except for manual updates in db using update()
     this.emitter = new EventEmitter3();
-    this.avenger = new Avenger(queries, cacheInitialState);
+
     this.remote = remote;
+    this.avenger = new Avenger(queries, data, {
+      queries,
+      state
+    });
+
+    this.updateWithData(this.avenger.queries)(data);
   }
 
   on(event, listener) {
@@ -77,10 +83,6 @@ export default class App {
     }
   }
 
-  setData(data) {
-    this.updateWithData(this.avenger.queries)(data);
-  }
-
   runOrRemote(state, queries) {
     if (this.qs) {
       this.qs.off('change');
@@ -109,7 +111,10 @@ export default class App {
       log(`executing recipe on remote ${this.remote}`, recipe);
 
       return axios.post(this.remote, recipe).then(({ data }) => {
-        // TODO(gio): should update cacheable data caches when back here
+        this.avenger.patchCache({
+          queries,
+          state
+        }, data);
         log('data from remote', data);
         return data;
       }).then(update);

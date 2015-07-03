@@ -8,7 +8,9 @@ describe('avenger export', () => {
 
   it('App should be instantiable with named parameters', () => {
     const remote = 'http://endpoint';
-    const app = new App({ queries: {}, cacheInitialState: {}, remote });
+    const app = new App({ queries: {
+      a: Query({ id: 'a', fetch: () => () => {} })
+    }, data: {}, state: {}, remote });
 
     expect(app.remote).toBe(remote);
   });
