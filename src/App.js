@@ -79,7 +79,7 @@ export default class App {
       this._get = Object.keys(queries).reduce((ac, qId) => assign(ac, {
         [qId]: data[qId] && Object.keys(data[qId]).length === 1 && data[qId][qId] ? data[qId][qId] : data[qId] || null
       }), {});
-      this.update(() => {});
+      setTimeout(this.update.bind(this, () => {}));
     };
   }
 
