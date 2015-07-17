@@ -1,6 +1,5 @@
 import t from 'tcomb';
 import isReactComponent from '../isReactComponent';
-import stringify from '../stringify';
 import debug from 'debug';
 
 const log = debug('revenge:@pure');
@@ -17,7 +16,7 @@ function shallowEqual(objA, objB, section, component) {
     if (objA.hasOwnProperty(key) &&
         (!objB.hasOwnProperty(key) || objA[key] !== objB[key])) {
       if (process.env.NODE_ENV !== 'production') {
-        log(`component ${displayName} with rootNodeID ${rootNodeID} will re-render since ${section} key ${key} is changed from ${stringify(objA[key])} to ${stringify(objB[key])}`);
+        log(`component ${displayName} with rootNodeID ${rootNodeID} will re-render since ${section} key ${key} is changed from `, objA[key], ' to ', objB[key]);
       }
       return false;
     }
@@ -26,7 +25,7 @@ function shallowEqual(objA, objB, section, component) {
   for (key in objB) {
     if (objB.hasOwnProperty(key) && !objA.hasOwnProperty(key)) {
       if (process.env.NODE_ENV !== 'production') {
-        log(`component ${displayName} with rootNodeID ${rootNodeID} will re-render since ${section} key ${key} with value ${stringify(objB[key])} is new`);
+        log(`component ${displayName} with rootNodeID ${rootNodeID} will re-render since ${section} key ${key} with value `, objB[key], 'is new');
       }
       return false;
     }
