@@ -3,12 +3,12 @@ import App from './App';
 
 export default {
 
-  serialize(state) {
-    Cookies.set(App.AUTH_KEY, JSON.stringify(state));
+  serialize(state, cookieSetter = null) {
+    (cookieSetter || Cookies.set)(App.AUTH_KEY, JSON.stringify(state));
   },
 
-  deserialize() {
-    return JSON.parse(Cookies.get(App.AUTH_KEY) || 'null');
+  deserialize(cookieGetter = null) {
+    return JSON.parse((cookieGetter || Cookies.get)(App.AUTH_KEY) || 'null');
   }
 
 };
