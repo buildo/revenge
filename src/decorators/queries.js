@@ -40,7 +40,7 @@ export default function queries(declared) {
           [propName]: obj[queryId] || defaultValue
         });
       }, {});
-    }
+    };
 
     @listener(QueriesWrapper.prototype.forceUpdate)
     class QueriesWrapper extends React.Component {
