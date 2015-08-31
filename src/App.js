@@ -57,7 +57,10 @@ export default class App {
       }
     }
 
-    return optimize(poset, fetchers);
+    this.emitter.emit('fetchStart');
+    return optimize(poset, fetchers).then(() => {
+      this.emitter.emit('fetchEnd');
+    });
   }
 
   on(event, listener) {
