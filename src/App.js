@@ -77,8 +77,10 @@ export default class App {
   updateWithData(queries) {
     return data => {
       this._get = Object.keys(queries).reduce((ac, qId) => assign(ac, {
+        // TODO(gio): breaks return null in lol
         [qId]: data[qId] && Object.keys(data[qId]).length === 1 && data[qId][qId] ? data[qId][qId] : data[qId] || null
       }), {});
+      this._get._meta = data._meta;
       setTimeout(this.update.bind(this, () => {}));
     };
   }
@@ -95,8 +97,8 @@ export default class App {
       state
     });
 
-    const update = this.updateWithData(queries);
-    this.qs.on('change', update);
+    const updateWithData = this.updateWithData(queries);
+    this.qs.on('change', updateWithData);
 
     if (!this.remote) {
       // execute locally
@@ -117,7 +119,7 @@ export default class App {
         }, data);
         log('data from remote', data);
         return data;
-      }).then(update);
+      }).then(updateWithData);
     }
   }
 

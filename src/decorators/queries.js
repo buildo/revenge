@@ -15,7 +15,7 @@ const log = debug('revenge:@queries');
 export default function queries(declared) {
 
   if (process.env.NODE_ENV !== 'production') {
-    t.assert(Declared.is(declared), `@queries decorator can only be configured with a list of query ids. Optionally rename a single query like this: { propName: queryId }`);
+    t.assert(Declared.is(declared), `@queries decorator can only be configured with a list of query ids. Optionally rename a query like this: { propName: queryId }`);
   }
 
   return function (Component) {
@@ -26,28 +26,52 @@ export default function queries(declared) {
       t.assert(!Component.queries, `@queries decorator can not be applied to component ${name}, queries are already defined`);
     }
 
+    const shouldHaveAppProp = ctx => {
+      t.assert(t.Obj.is(ctx.props.app), `@queries decorator: missing app prop in component ${Component.name}`);
+    };
+
+    const filterDeclared = (obj, defaultValue) => {
+      return declared.reduce((ac, q) => {
+        const query = t.Str.is(q) ? { [q]: q } : q;
+        const propName = Object.keys(query)[0];
+        const queryId = query[propName];
+
+        return assign(ac, {
+          [propName]: obj[queryId] || defaultValue
+        });
+      }, {});
+    }
+
     @listener(QueriesWrapper.prototype.forceUpdate)
     class QueriesWrapper extends React.Component {
 
       get() {
         if (process.env.NODE_ENV !== 'production') {
-          t.assert(t.Obj.is(this.props.app), `@queries decorator: missing app prop in component ${Component.name}`);
+          shouldHaveAppProp(this);
         }
+
+        return filterDeclared(this.props.app.get(), null);
+      }
+
+      readyState() {
+        if (process.env.NODE_ENV !== 'production') {
+          shouldHaveAppProp(this);
+        }
+
         const data = this.props.app.get();
-
-        return declared.reduce((ac, q) => {
-          const query = t.Str.is(q) ? { [q]: q } : q;
-          const propName = Object.keys(query)[0];
-          const qId = query[propName];
-
-          return assign(ac, {
-            [propName]: data[qId] || null
-          });
-        }, {});
+        const filteredMeta = data ? filterDeclared(data._meta, {
+          loading: false, cached: false
+        }) : {};
+        return {
+          readyState: assign(filteredMeta, {
+            loading: Object.keys(filteredMeta).filter(({ loading }) => loading).length === declared.length,
+            cached: Object.keys(filteredMeta).filter(({ cached }) => cached).length === declared.length
+          })
+        };
       }
 
       render() {
-        return <Component {...this.props} {...this.get()} />;
+        return <Component {...this.props} {...this.get()} {...this.readyState()} />;
       }
 
     }
