@@ -6,7 +6,7 @@ export default function readyState(Component) {
 
   if (process.env.NODE_ENV !== 'production') {
     t.assert(isReactComponent(Component), `@readyState decorator can only be applied to React.Component(s)`);
-    t.assert(!Component.__readyState), `@readyState decorator should only be applied once`);
+    t.assert(!Component.__readyState, `@readyState decorator should only be applied once`);
   }
 
   const { componentWillMount, componentWillUnmount } = Component.prototype;
@@ -48,4 +48,4 @@ export default function readyState(Component) {
   }
 
   return ReadyStateWrapper;
-};
+}
