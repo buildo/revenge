@@ -19,12 +19,12 @@ export default function readyState(Component) {
       if (process.env.NODE_ENV !== 'production') {
         t.assert(t.Obj.is(this.props.app), `@readyState decorator: missing app prop in component ${Component.name}`);
       }
-      const app = this.props.app;
 
-      this.unobserveFetchStart = this.props.app.on('fetchStart', () => {
+      const app = this.props.app;
+      this.unobserveFetchStart = app.on('fetchStart', () => {
         this.__readyState.loading = true;
       });
-      this.unobserveFetchEnd = this.props.app.on('fetchEnd', () => {
+      this.unobserveFetchEnd = app.on('fetchEnd', () => {
         this.__readyState.loading = false;
       });
 
