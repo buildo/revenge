@@ -14,7 +14,7 @@ export default function readyState(Component) {
   class ReadyStateWrapper extends React.Component {
 
     componentWillMount() {
-      this.readyState = { loading: false };
+      this.__readyState = { loading: false };
 
       if (process.env.NODE_ENV !== 'production') {
         t.assert(t.Obj.is(this.props.app), `@readyState decorator: missing app prop in component ${Component.name}`);
