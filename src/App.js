@@ -77,8 +77,7 @@ export default class App {
   updateWithData(queries) {
     return data => {
       this._get = Object.keys(queries).reduce((ac, qId) => assign(ac, {
-        // TODO(gio): breaks return null in lol
-        [qId]: data[qId] && Object.keys(data[qId]).length === 1 && data[qId][qId] ? data[qId][qId] : data[qId] || null
+        [qId]: data[qId] && Object.keys(data[qId]).length === 1 ? data[qId][Object.keys(data[qId])[0]] : data[qId] || null
       }), {});
       this._get._meta = data._meta;
       setTimeout(this.update.bind(this, () => {}));
