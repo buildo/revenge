@@ -122,6 +122,11 @@ export default class App {
     }
   }
 
+  runCommand(cmd) {
+    // TODO(gio): not supporting `remote` yet
+    return this.qs.runCommand(cmd);
+  }
+
   get() {
     // hack: work around the fact that
     // @listener and @queries are two distinct entities
