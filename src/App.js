@@ -57,10 +57,16 @@ export default class App {
         acc;
     }, {});
 
+    const cleanup = o => Object.keys(o).reduce((ac, k) => {
+      if (typeof o[k] !== 'undefined' && o[k] !== null) {
+        ac[k] = o[k];
+      }
+      return ac;
+    }, {});
     // FIXME(gio): this is totally not safe
     const state = {
-      ...params,
-      ...query,
+      ...cleanup(params),
+      ...cleanup(query),
       ...this.getState()
     };
     log(`fetching queries: %o, state: %o`, queries, state);
