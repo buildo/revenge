@@ -1,5 +1,5 @@
 export t from 'tcomb';
-export { Query } from 'avenger';
+export { Query, Command } from 'avenger';
 export App from './App';
 export remote from './remote';
 export CookieSerializer from './CookieSerializer';
