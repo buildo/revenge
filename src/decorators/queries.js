@@ -1,14 +1,27 @@
 import React from 'react';
 import t from 'tcomb';
 import assign from 'lodash/object/assign';
+import partialRight from 'lodash/function/partialRight';
 import debug from 'debug';
 import listener from './listener';
 import isReactComponent from '../isReactComponent';
 
-const Declared = t.list(t.union([
-  t.Str,
-  t.dict(t.Str, t.Str)
-]));
+const hasOneKey = v => Object.keys(v).length === 1;
+const StringDict = t.subtype(t.dict(t.Str, t.Str), hasOneKey, 'StringDict');
+const FilterStateFn = t.Func; // revenge State -> t.Bool
+const FilterDict = t.subtype(t.dict(t.Str, t.struct({
+  query: t.Str,
+  filter: t.maybe(FilterStateFn)
+})), hasOneKey, 'FilterDict');
+const DeclaredQ = t.union([
+  t.Str, StringDict, FilterDict
+], 'DeclaredQ');
+DeclaredQ.dispatch = v => t.match(v,
+  t.Str, () => t.Str,
+  StringDict, () => StringDict,
+  FilterDict, () => FilterDict
+);
+const Declared = t.list(DeclaredQ, 'Declared');
 
 const log = debug('revenge:@queries');
 
@@ -76,10 +89,21 @@ export default function queries(declared) {
 
     }
 
+    const defaultFilter = () => true;
+    const getFilter = partialRight(t.match,
+      t.Str, query => ({ query, filter: defaultFilter }),
+      StringDict, query => ({ query: query[Object.keys(query)[0]], filter: defaultFilter }),
+      FilterDict, q => {
+        const qq = q[Object.keys(q)[0]];
+        const { query, filter } = qq;
+        return { query, filter: FilterStateFn.is(filter) ? filter : defaultFilter };
+      }
+    );
+
     QueriesWrapper.queries = declared.reduce((ac, q) => {
       const query = t.Str.is(q) ? q : q[Object.keys(q)[0]];
       return assign(ac, {
-        [query]: true
+        [query]: getFilter(q)
       });
     }, {});
     log(`${Component.name} cleaned up queries: %o`, QueriesWrapper.queries);

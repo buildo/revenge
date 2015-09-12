@@ -49,13 +49,7 @@ export default class App {
 
   fetch(routes, params, query): Promise {
 
-    // retrieve all queries
-    const queries = routes.reduce((acc, route) => {
-      log(`${route.handler.name}: %o %o %o %o`, route, route.handler, route.handler.prototype, route.handler.queries ? route.handler.queries : 'no qs');
-      return route.handler.queries ?
-        assign(acc, route.handler.queries) :
-        acc;
-    }, {});
+    // build state
 
     const cleanup = o => Object.keys(o).reduce((ac, k) => {
       if (typeof o[k] !== 'undefined' && o[k] !== null) {
@@ -69,7 +63,31 @@ export default class App {
       ...cleanup(query),
       ...this.getState()
     };
+
+
+    // retrieve all (unique) queries
+
+    const qs = routes.map(route => {
+      log(`${route.handler.name} queries: %o %o %o %o`, route, route.handler, route.handler.prototype, route.handler.queries ? route.handler.queries : 'no qs');
+      return route.handler.queries;
+    }).filter(v => v).reduce((ac, q) => ({
+      ...ac,
+      ...q
+    }), {});
+
+
+    // filter them by current state
+    // and prepare a proper "set" for avenger
+
+    const queries = Object.keys(qs).map(k => qs[k]).filter(({ filter }) => filter(state)).map(({ query }) => query).reduce((ac, q) => ({
+      ...ac,
+      [q]: true
+    }), {});
+
     log(`fetching queries: %o, state: %o`, queries, state);
+
+
+    // finally run avenger
 
     if (Object.keys(queries).length === 0) {
       // TODO(gio): hack, empty query set case
