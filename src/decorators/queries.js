@@ -9,10 +9,14 @@ import isReactComponent from '../isReactComponent';
 const hasOneKey = v => Object.keys(v).length === 1;
 const StringDict = t.subtype(t.dict(t.Str, t.Str), hasOneKey, 'StringDict');
 const FilterStateFn = t.Func; // revenge State -> t.Bool
-const FilterDict = t.subtype(t.dict(t.Str, t.struct({
-  query: t.Str,
-  filter: t.maybe(FilterStateFn)
-})), hasOneKey, 'FilterDict');
+const FilterDict = t.subtype(t.dict(t.Str,
+  t.subtype(t.Obj, ({ query, filter }) => t.Str.is(query) && t.maybe(FilterStateFn).is(filter))
+  // TODO(gio): not sure why this doesn't work:
+  // t.struct({
+  //   query: t.Str,
+  //   filter: t.maybe(FilterStateFn)
+  // })
+), hasOneKey, 'FilterDict');
 const DeclaredQ = t.union([
   t.Str, StringDict, FilterDict
 ], 'DeclaredQ');
@@ -101,7 +105,7 @@ export default function queries(declared) {
     );
 
     QueriesWrapper.queries = declared.reduce((ac, q) => {
-      const query = t.Str.is(q) ? q : q[Object.keys(q)[0]];
+      const query = t.Str.is(q) ? q : t.Str.is(q[Object.keys(q)[0]]) ? q[Object.keys(q)[0]] : q[Object.keys(q)[0]].query;
       return assign(ac, {
         [query]: getFilter(q)
       });
