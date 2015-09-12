@@ -32,7 +32,7 @@
     "require-dir": "^0.3.0"
   },
   "dependencies": {
-    "avenger": "^0.0.14",
+    "avenger": "0.0.15",
     "axios": "^0.5.4",
     "cookies-js": "^1.2.1",
     "debug": "^2.2.0",
