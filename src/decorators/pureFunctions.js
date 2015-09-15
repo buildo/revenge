@@ -18,6 +18,7 @@ export default function pureFunctionsInner(Component) {
 
   if (process.env.NODE_ENV !== 'production') {
     t.assert(isReactComponent(Component), `@pureFunctions decorator can only be applied to React.Component(s)`);
+    t.assert(!!Component.prototype.shouldComponentUpdate, `shouldComponentUpdate method not found on ${Component.name} prototype. Did you forget @pure?`);
   }
 
   @pure
