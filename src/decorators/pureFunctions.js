@@ -11,6 +11,16 @@ const log = debug('revenge:@pureFunctions');
 // a list in the form `[t.Func \[, ...t.Any\]]`
 const PureFunction = t.subtype(t.list(t.Any), ([fn]) => t.Func.is(fn), 'PureFunction');
 
+// used to tag PureFunction props
+const PFWrapper = t.struct({
+  pf: PureFunction
+}, 'PFWrapper');
+
+// returns a PureFunction tagged prop
+export const pureFunctionProp = (...args) => PFWrapper({
+  pf: [...args]
+});
+
 // TODO(gio): consider specifying and typing `pfProps`
 // export default function pureFunctions(/* pfProps */) {
   // return function pureFunctionsInner(Component) {
@@ -64,14 +74,14 @@ export default function pureFunctionsInner(Component) {
 
     getProps() {
       const allKeys = Object.keys(this.props);
-      const pfKeys = allKeys.filter(k => PureFunction.is(this.props[k]));
-      const otherKeys = allKeys.filter(k => !PureFunction.is(this.props[k]));
+      const pfKeys = allKeys.filter(k => PFWrapper.is(this.props[k]));
+      const otherKeys = allKeys.filter(k => !PFWrapper.is(this.props[k]));
       return {
         ...otherKeys.reduce((ac, k) => ({
           ...ac, [k]: this.props[k]
         }), {}),
         ... pfKeys.reduce((ac, k) => ({
-          ...ac, [k]: this.fromCacheOrAdd(...this.props[k])
+          ...ac, [k]: this.fromCacheOrAdd(...this.props[k].pf)
         }), {})
       };
     }
