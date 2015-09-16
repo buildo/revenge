@@ -34,7 +34,7 @@ export default function pureFunctionsInner(Component) {
   @pure
   class PureFunctionsWrapper extends React.Component {
 
-    fromCacheOrAdd = (fn, ...args) => {
+    fromCacheOrAdd = ([fn, ...args], propName) => {
       // pf cache is per component instance
       if (!this._pureFunctionsCache) {
         // TODO(gio):
@@ -56,7 +56,7 @@ export default function pureFunctionsInner(Component) {
 
       if (found) {
         // return old, bound ref
-        log(`reusing fn ref for Function ${found.fn} in ${Component.name}`);
+        log(`reusing fn ref for ${propName} =`, found.fn, 'in', Component.name);
         return found.bound;
       }
 
@@ -81,7 +81,7 @@ export default function pureFunctionsInner(Component) {
           ...ac, [k]: this.props[k]
         }), {}),
         ... pfKeys.reduce((ac, k) => ({
-          ...ac, [k]: this.fromCacheOrAdd(...this.props[k].pf)
+          ...ac, [k]: this.fromCacheOrAdd(this.props[k].pf, k)
         }), {})
       };
     }
