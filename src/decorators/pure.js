@@ -37,11 +37,15 @@ export default function pure(Component) {
 
   if (process.env.NODE_ENV !== 'production') {
     t.assert(isReactComponent(Component), `@pure decorator can only be applied to React.Component(s)`);
-    t.assert(!(t.Func.is(Component.prototype.shouldComponentUpdate)), `cannot apply @pure decorator to component ${Component.name}: a shouldComponentUpdate method is already defined`);
   }
 
-  Component.prototype.shouldComponentUpdate = function (nextProps, nextState) {
-    return !shallowEqual(this.props, nextProps, 'props', this) ||
-           !shallowEqual(this.state, nextState, 'state', this);
+  const originalScu = Component.prototype.shouldComponentUpdate;
+
+  Component.prototype.shouldComponentUpdate = function(nextProps, nextState) {
+    const _scu = () => {
+      return !shallowEqual(this.props, nextProps, 'props', this) ||
+             !shallowEqual(this.state, nextState, 'state', this);
+    };
+    return originalScu ? originalScu(nextProps, nextState, _scu) : _scu();
   };
 }

@@ -29,7 +29,8 @@
     "eslint": "^0.23.0",
     "eslint-plugin-react": "^2.5.2",
     "expect": "^1.6.0",
-    "require-dir": "^0.3.0"
+    "require-dir": "^0.3.0",
+    "sinon": "^1.16.1"
   },
   "dependencies": {
     "avenger": "0.0.15",
