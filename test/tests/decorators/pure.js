@@ -8,8 +8,7 @@ describe('@pure decorator', () => {
   it('should add shouldComponentUpdate method on Component prototype', () => {
 
     @pure
-    class A extends React.Component {
-    }
+    class A extends React.Component {}
 
     const a = new A();
     expect(a.shouldComponentUpdate).toBeA(Function);

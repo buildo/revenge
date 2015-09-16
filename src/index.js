@@ -8,5 +8,6 @@ export listener from './decorators/listener';
 export log from './decorators/log';
 export props from './decorators/props';
 export pure from './decorators/pure';
+export pureFunctions, { pureFunctionProp } from './decorators/pureFunctions';
 export queries from './decorators/queries';
 export skinnable from './decorators/skinnable';
