@@ -76,13 +76,13 @@ export default function queries(declared) {
         }
 
         const data = this.props.app.get();
-        const filteredMeta = data ? filterDeclared(data._meta, {
-          loading: false, cached: false
+        const filteredMeta = data && data.__meta ? filterDeclared(data.__meta, {
+          loading: false, cache: false
         }) : {};
         return {
           readyState: assign(filteredMeta, {
             loading: Object.keys(filteredMeta).filter(({ loading }) => loading).length === declared.length,
-            cached: Object.keys(filteredMeta).filter(({ cached }) => cached).length === declared.length
+            cache: Object.keys(filteredMeta).filter(({ cache }) => cache).length === declared.length
           })
         };
       }
