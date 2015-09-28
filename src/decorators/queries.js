@@ -50,13 +50,33 @@ export default function queries(declared) {
     // TODO(gio): this is perf-relevant, should be optimized a bit
     const filterDeclared = (obj, defaultValue) => {
       return declared.reduce((ac, q) => {
-        const query = t.Str.is(q) ? { [q]: q } : q;
-        const propName = Object.keys(query)[0];
-        const queryId = query[propName];
+        const {
+          propName, queryId
+        } = t.match(q,
+          t.Str, query => ({
+            queryId: query,
+            propName: query
+          }),
+          StringDict, q => {
+            const propName = Object.keys(q)[0];
+            return {
+              queryId: q[propName],
+              propName: propName
+            };
+          },
+          FilterDict, q => {
+            const propName = Object.keys(q)[0];
+            return {
+              queryId: q[propName].query,
+              propName
+            };
+          }
+        );
 
-        return assign(ac, {
+        return {
+          ...ac,
           [propName]: obj[queryId] || defaultValue
-        });
+        };
       }, {});
     };
 
