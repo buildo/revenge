@@ -47,6 +47,7 @@ export default function queries(declared) {
       t.assert(t.Obj.is(ctx.props.app), `@queries decorator: missing app prop in component ${Component.name}`);
     };
 
+    // TODO(gio): this is perf-relevant, should be optimized a bit
     const filterDeclared = (obj, defaultValue) => {
       return declared.reduce((ac, q) => {
         const query = t.Str.is(q) ? { [q]: q } : q;

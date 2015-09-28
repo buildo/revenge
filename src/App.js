@@ -2,6 +2,7 @@ import EventEmitter3 from 'eventemitter3';
 import t from 'tcomb';
 import Avenger from 'avenger';
 import debug from 'debug';
+import debounce from 'lodash/function/debounce';
 // import axios from 'axios';
 
 const log = debug('revenge:App');
@@ -26,13 +27,23 @@ export default class App {
     return () => this.emitter.off(event, listener);
   }
 
+  // TODO(gio): this is completely arbitrary,
+  // especially in the `10` part
+  // ...but speeds things up A LOT
+  _updateQueue = []
+  _update = debounce(() => {
+    this.emitter.emit('stateWillChange');
+    while (this._updateQueue.length > 0) {
+      this._updateQueue.shift()();
+    }
+    this.emitter.emit('stateDidChange');
+  }, 10)
   update(f) {
     if (process.env.NODE_ENV !== 'production') {
       t.assert(t.Func.is(f), `${this.constructor.name}.update(f) expects a function`);
     }
-    this.emitter.emit('stateWillChange');
-    f();
-    this.emitter.emit('stateDidChange');
+    this._updateQueue.push(f);
+    this._update();
   }
 
   getState() {
@@ -91,7 +102,6 @@ export default class App {
         ...ac,
         [q]: this.allQueries[q]
       }), {});
-
 
     // finally run avenger
     log(`fetching queries: %o, state: %o`, queries, this.state);
