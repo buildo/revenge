@@ -10,7 +10,7 @@
 
 **Note**: Gaps between patch versions are faulty/broken releases.
 
-## v0.3.0
+## v0.0.3
 
 - **New Feature**
     + add more infos when pure decorator's algorithm detects a re-rendering fix #23
