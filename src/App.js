@@ -54,17 +54,7 @@ export default class App {
     return this.avenger.cache.state;
   }
 
-  fetch(routes, params, query): Promise {
-
-    // // retrieve all queries
-    // const declared = routes.map(({ handler }) => handler.queries || {}).reduce((ac, qs) => ({
-    //   ...ac,
-    //   ...qs
-    // }), {});
-    // const queries = Object.keys(declared).reduce((ac, q) => ({
-    //   ...ac,
-    //   [q]: this.allQueries[q]
-    // }), {});
+  fetch(routes, params, query) {
 
     // build state
     const cleanup = o => Object.keys(o).reduce((ac, k) => {
@@ -105,7 +95,9 @@ export default class App {
 
     // finally run avenger
     log(`fetching queries: %o, state: %o`, queries, this.state);
-    return this.runOrRemote(this.state, queries);
+    return this.avPending(
+      this.runOrRemote(this.state, queries)
+    );
   }
 
   runOrRemote(state, queries) {
@@ -136,12 +128,29 @@ export default class App {
 
   runCommand(cmd) {
     // TODO(gio): not supporting `remote` yet
-    return this.avenger.runCommand(this.state, cmd);
+    return this.avPending(
+      this.avenger.runCommand(this.state, cmd)
+    );
   }
 
   avChange = data => {
     this.update(() => {
       this._get = data;
+    });
+  }
+
+  avPending = p => {
+    return new Promise((_, reject) => {
+      this._avPendingReject = reject;
+      return p;
+    });
+  }
+
+  avError = err => {
+    this.update(() => {
+      if (this._avPendingReject) {
+        this._avPendingReject(err);
+      }
     });
   }
 
