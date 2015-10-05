@@ -1,5 +1,6 @@
 import debug from 'debug';
 import listener from '../decorators/listener';
+import transitionTo from './transitionTo';
 
 const log = debug('revenge:@anonymous');
 
@@ -10,7 +11,7 @@ export default function anonymous(Home = 'Home') {
       if (this.props.app.isAuthenticated()) {
         const { nextPath = Home } = this.props.router.getCurrentQuery();
         log('listening... user is authenticated, redirecting to %s...', nextPath);
-        this.props.router.transitionTo(nextPath);
+        transitionTo(this.props.router, nextPath);
       }
     })(Component);
 
