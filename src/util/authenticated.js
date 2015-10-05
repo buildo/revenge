@@ -1,5 +1,6 @@
 import debug from 'debug';
 import listener from '../decorators/listener';
+import transitionTo from './transitionTo';
 
 const log = debug('revenge:@authenticated');
 
@@ -10,7 +11,7 @@ export default function authenticated(Login = 'Login') {
       const app = this.props.app;
       if (!app.isAuthenticated()) {
         log('listening... user is not authenticated, redirecting to %s...', Login);
-        this.props.router.transitionTo(Login);
+        transitionTo(this.props.router, Login);
       }
     })(Component);
 
