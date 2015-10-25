@@ -11,10 +11,25 @@ export default class App {
 
   static AUTH_KEY = 'AUTH_KEY';
 
-  constructor({ queries = {}, data = {}, remote }) {
+  constructor({
+    queries = {},
+    data = {},
+    remote,
+    batchUpdateDelay = 10
+  }) {
     // TODO(gio): app itself is an emitter.. not needed
     // except for manual updates in db using update()
     this.emitter = new EventEmitter3();
+
+    // setup batched update()
+    this._updateQueue = [];
+    this._update = debounce(() => {
+      this.emitter.emit('stateWillChange');
+      while (this._updateQueue.length > 0) {
+        this._updateQueue.shift()();
+      }
+      this.emitter.emit('stateDidChange');
+    }, batchUpdateDelay);
 
     this.remote = remote;
     this.allQueries = queries;
@@ -27,17 +42,6 @@ export default class App {
     return () => this.emitter.off(event, listener);
   }
 
-  // TODO(gio): this is completely arbitrary,
-  // especially in the `10` part
-  // ...but speeds things up A LOT
-  _updateQueue = []
-  _update = debounce(() => {
-    this.emitter.emit('stateWillChange');
-    while (this._updateQueue.length > 0) {
-      this._updateQueue.shift()();
-    }
-    this.emitter.emit('stateDidChange');
-  }, 10)
   update(f) {
     if (process.env.NODE_ENV !== 'production') {
       t.assert(t.Func.is(f), `${this.constructor.name}.update(f) expects a function`);
@@ -56,16 +60,6 @@ export default class App {
 
   fetch(routes, params, query): Promise {
 
-    // // retrieve all queries
-    // const declared = routes.map(({ handler }) => handler.queries || {}).reduce((ac, qs) => ({
-    //   ...ac,
-    //   ...qs
-    // }), {});
-    // const queries = Object.keys(declared).reduce((ac, q) => ({
-    //   ...ac,
-    //   [q]: this.allQueries[q]
-    // }), {});
-
     // build state
     const cleanup = o => Object.keys(o).reduce((ac, k) => {
       if (typeof o[k] !== 'undefined' && o[k] !== null) {
@@ -75,14 +69,13 @@ export default class App {
     }, {});
     // FIXME(gio): this is totally not safe
     this.state = {
-      ...cleanup(params),
       ...cleanup(query),
+      ...cleanup(params),
       ...this.getState()
     };
 
 
     // retrieve all (unique) queries
-
     const qs = routes.map(route => {
       log(`${route.handler.name} queries: %o %o %o %o`, route, route.handler, route.handler.prototype, route.handler.queries ? route.handler.queries : 'no qs');
       return route.handler.queries;
@@ -94,7 +87,6 @@ export default class App {
 
     // filter them by current state
     // and prepare a proper "set" for avenger
-
     const queries = Object.keys(qs)
       .map(k => qs[k])
       .filter(({ filter }) => filter(this.state))
