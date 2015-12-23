@@ -50,30 +50,12 @@ export default class App {
     this._update();
   }
 
-  getState() {
-    throw new Error(`App must implement 'getState()'`);
-  }
-
   getCache() {
     return this.avenger.cache.state;
   }
 
-  fetch(routes, params, query): Promise {
-
-    // build state
-    const cleanup = o => Object.keys(o).reduce((ac, k) => {
-      if (typeof o[k] !== 'undefined' && o[k] !== null) {
-        ac[k] = o[k];
-      }
-      return ac;
-    }, {});
-    // FIXME(gio): this is totally not safe
-    this.state = {
-      ...cleanup(query),
-      ...cleanup(params),
-      ...this.getState()
-    };
-
+  fetch(routes, state = {}): Promise {
+    this.state = state;
 
     // retrieve all (unique) queries
     const qs = routes.map(route => {
