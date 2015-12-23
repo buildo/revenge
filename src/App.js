@@ -50,7 +50,7 @@ export default class App {
     this._update();
   }
 
-  getState() {
+  getState({ query, params }) {
     throw new Error(`App must implement 'getState()'`);
   }
 
@@ -60,20 +60,7 @@ export default class App {
 
   fetch(routes, params, query): Promise {
 
-    // build state
-    const cleanup = o => Object.keys(o).reduce((ac, k) => {
-      if (typeof o[k] !== 'undefined' && o[k] !== null) {
-        ac[k] = o[k];
-      }
-      return ac;
-    }, {});
-    // FIXME(gio): this is totally not safe
-    this.state = {
-      ...cleanup(query),
-      ...cleanup(params),
-      ...this.getState()
-    };
-
+    this.state = this.getState({ params, query });
 
     // retrieve all (unique) queries
     const qs = routes.map(route => {
