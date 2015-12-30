@@ -102,8 +102,8 @@ export default function queries(declared) {
         }) : {};
         return {
           readyState: assign(filteredMeta, {
-            loading: Object.keys(filteredMeta).filter(({ loading }) => loading).length === declared.length,
-            cache: Object.keys(filteredMeta).filter(({ cache }) => cache).length === declared.length
+            loading: Object.keys(filteredMeta).filter(key => filteredMeta[key].loading).length > 0,
+            cache: Object.keys(filteredMeta).filter(key => filteredMeta[key].cache).length === declared.length
           })
         };
       }
