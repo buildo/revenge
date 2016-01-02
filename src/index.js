@@ -11,3 +11,4 @@ export pure from './decorators/pure';
 export pureFunctions, { pureFunctionProp } from './decorators/pureFunctions';
 export queries from './decorators/queries';
 export skinnable from './decorators/skinnable';
+export mapProps from './decorators/mapProps';
