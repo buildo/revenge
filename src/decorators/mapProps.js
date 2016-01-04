@@ -10,7 +10,6 @@ export default function mapProps(map) {
 
   return function (Component) {
     if (process.env.NODE_ENV !== 'production') {
-      const name = Component.name;
       t.assert(isReactComponent(Component), `@mapProps decorator can only be applied to React.Component(s)`);
     }
 
