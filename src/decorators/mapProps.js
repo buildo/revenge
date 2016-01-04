@@ -1,9 +1,5 @@
 import React from 'react';
 import t from 'tcomb';
-import assign from 'lodash/object/assign';
-import partialRight from 'lodash/function/partialRight';
-import debug from 'debug';
-import listener from './listener';
 import isReactComponent from '../isReactComponent';
 
 export default function mapProps(map) {
