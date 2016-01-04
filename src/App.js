@@ -59,19 +59,20 @@ export default class App {
 
     // retrieve all (unique) queries
     const qs = routes.map(route => {
-      log(`${route.handler.name} queries: %o %o %o %o`, route, route.handler, route.handler.prototype, route.handler.queries ? route.handler.queries : 'no qs');
-      return route.handler.queries;
-    }).filter(v => v).reduce((ac, q) => ({
-      ...ac,
-      ...q
-    }), {});
+        log(`${route.handler.name} queries: %o %o %o %o`, route, route.handler, route.handler.prototype, route.handler.queries ? route.handler.queries : 'no qs');
+        return route.handler.queries;
+      })
+      .filter(v => v)
+      .reduce((ac, qs) => ({  ...ac, ...(
+        Object.keys(qs)
+          // filter them by current state
+          .filter(k => qs[k].filter(this.state))
+          .reduce((acc, k) => ({  ...acc, [k]: qs[k] }), {})
+      ) }), {});
 
-
-    // filter them by current state
     // and prepare a proper "set" for avenger
     const queries = Object.keys(qs)
       .map(k => qs[k])
-      .filter(({ filter }) => filter(this.state))
       .map(({ query }) => query).reduce((ac, q) => ({
         ...ac,
         [q]: this.allQueries[q]
