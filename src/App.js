@@ -2,7 +2,7 @@ import EventEmitter3 from 'eventemitter3';
 import t from 'tcomb';
 import Avenger from 'avenger';
 import debug from 'debug';
-import debounce from 'lodash/function/debounce';
+import debounce from 'lodash/debounce';
 // import axios from 'axios';
 
 const log = debug('revenge:App');

@@ -29,6 +29,7 @@
     "eslint": "^1.6.0",
     "eslint-plugin-react": "^3.5.1",
     "expect": "^1.6.0",
+    "react": "^0.13.3",
     "require-dir": "^0.3.0",
     "sinon": "^1.16.1"
   },
@@ -39,7 +40,7 @@
     "debug": "^2.2.0",
     "eventemitter3": "^1.1.0",
     "fetch-optimizer": "^0.2.0",
-    "lodash": "^3.9.3",
+    "lodash": "^4.6.1",
     "tcomb": "^2.4.0",
     "tcomb-react": "^0.8.8"
   },
