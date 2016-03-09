@@ -3,8 +3,8 @@ import t from 'tcomb';
 import isReactComponent from '../isReactComponent';
 import pure from './pure';
 import debug from 'debug';
-import partial from 'lodash/function/partial';
-import find from 'lodash/collection/find';
+import partial from 'lodash/partial';
+import find from 'lodash/find';
 
 const log = debug('revenge:@pureFunctions');
 
