@@ -34,15 +34,15 @@
     "sinon": "^1.16.1"
   },
   "dependencies": {
-    "avenger": "^0.1.7",
+    "avenger": "^0.1",
     "axios": "^0.7.0",
     "cookies-js": "^1.2.1",
     "debug": "^2.2.0",
     "eventemitter3": "^1.1.0",
     "fetch-optimizer": "^0.2.0",
     "lodash": "^4.6.1",
-    "tcomb": "^2.4.0",
-    "tcomb-react": "^0.8.8"
+    "tcomb": "^3",
+    "tcomb-react": "^0.9"
   },
   "peerDependencies": {
     "react": "^0.13.3",
