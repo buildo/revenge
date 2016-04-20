@@ -1,7 +1,7 @@
 {
   "name": "revenge",
   "version": "0.3.7",
-  "description": "revenge framework...best served cold",
+  "description": "react component utilities",
   "main": "lib",
   "scripts": {
     "test": "mocha",
@@ -14,9 +14,7 @@
     "type": "git",
     "url": "git@github.com:buildo/revenge.git"
   },
-  "keywords": [
-    "spyro"
-  ],
+  "keywords": [],
   "author": "buildo <we@buildo.io>",
   "license": "ISC",
   "bugs": {
@@ -34,18 +32,12 @@
     "sinon": "^1.16.1"
   },
   "dependencies": {
-    "avenger": "^0.1.7",
-    "axios": "^0.7.0",
     "cookies-js": "^1.2.1",
     "debug": "^2.2.0",
-    "eventemitter3": "^1.1.0",
-    "fetch-optimizer": "^0.2.0",
     "lodash": "^4.6.1",
-    "tcomb": "^2.4.0",
-    "tcomb-react": "^0.8.8"
+    "tcomb": "^3.0.0"
   },
   "peerDependencies": {
-    "react": "^0.13.3",
-    "react-router-transition-context": "^0.13.3"
+    "react": "^0.13.3"
   }
 }

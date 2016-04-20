@@ -1,1 +1,0 @@
-export { props as default } from 'tcomb-react';
