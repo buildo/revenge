@@ -32,7 +32,6 @@
     "sinon": "^1.16.1"
   },
   "dependencies": {
-    "cookies-js": "^1.2.1",
     "debug": "^2.2.0",
     "lodash": "^4.6.1",
     "tcomb": "^3.0.0"
