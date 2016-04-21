@@ -27,7 +27,7 @@
     "eslint": "^1.6.0",
     "eslint-plugin-react": "^3.5.1",
     "expect": "^1.6.0",
-    "react": "^0.13.3",
+    "react": "^0.14",
     "require-dir": "^0.3.0",
     "sinon": "^1.16.1"
   },
@@ -37,6 +37,6 @@
     "tcomb": "^3.0.0"
   },
   "peerDependencies": {
-    "react": "^0.13.3"
+    "react": "^0.13.3 || ^0.14"
   }
 }
