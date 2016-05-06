@@ -12,7 +12,7 @@ describe('@mapProps', () => {
     }), {});
     const MappedPropsComponent = mapProps(mapFn)(Component);
     const inst = new MappedPropsComponent({ a: 'foo', b: 'bar' });
-    expect(inst.render()._store.originalProps).toEqual({ mya: 'myfoo', myb: 'mybar' });
+    expect(inst.render().props).toEqual({ mya: 'myfoo', myb: 'mybar' });
   });
 
   it('should complain if not given a function', () => {
