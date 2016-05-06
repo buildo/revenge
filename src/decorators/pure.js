@@ -4,13 +4,14 @@ import debug from 'debug';
 
 const log = debug('revenge:@pure');
 
-function shallowEqual(objA, objB, section, component) {
+// export for tests
+export function shallowEqual(objA, objB, section, component) {
   if (objA === objB) {
     return true;
   }
 
   const displayName = component.constructor.name;
-  const rootNodeID = component._reactInternalInstance._rootNodeID;
+  const rootNodeID = (component._reactInternalInstance || {})._rootNodeID;
 
   if (!objA || typeof objA !== 'object') {
     // the opposite should never happen here, since we are using this as
