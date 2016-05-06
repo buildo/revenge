@@ -8,8 +8,19 @@ function shallowEqual(objA, objB, section, component) {
   if (objA === objB) {
     return true;
   }
+
   const displayName = component.constructor.name;
   const rootNodeID = component._reactInternalInstance._rootNodeID;
+
+  if (!objA || typeof objA !== 'object') {
+    // the opposite should never happen here, since we are using this as
+    // `shallowEqual(prevProps, nextProps)` or `shallowEqual(prevState, nextState)`
+    if (process.env.NODE_ENV !== 'production') {
+      log(`component ${displayName} with rootNodeID ${rootNodeID} will re-render since object has no previous value`);
+    }
+    return false;
+  }
+
   let key;
   // Test for A's keys different from B.
   for (key in objA) {
