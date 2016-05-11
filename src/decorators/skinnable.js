@@ -24,7 +24,7 @@ export default function skinnable(template?: Function): Function {
     }
 
     Component.prototype.render = function () {
-      return this.template(this.getLocals());
+      return this.template(this.getLocals(this.props));
     };
   };
 }
