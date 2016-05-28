@@ -2,6 +2,8 @@ A collection of small React Component helpers
 
 ## @pure decorator
 
+mark a Component as pure (perf)
+
 ```js
 import { pure } from 'revenge';
 
@@ -11,10 +13,11 @@ class UserCard extends React.Component {}
 
 ## @skinnable
 
+split logic and rendering (testability)
+
 ```js
 import { skinnable } from 'revenge';
 
-@pure
 @skinnable() // or @skinnable(mytemplate)
 class UserCard extends React.Component {
 
