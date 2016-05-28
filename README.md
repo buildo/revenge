@@ -37,3 +37,17 @@ class UserCard extends React.Component {
 ## @skinnable(contains(Component))
 
 wrap "template" components in a "smart/container" component
+
+```js
+import { skinnable, contains } from 'revenge';
+
+const UserCard = ({ name }) => <p>{name}</p>;
+
+@skinnable(contains(UserCard))
+class UserCardContainer extends React.Component {
+  getLocals() {
+    // ...complex logic to obtain data...
+    return { name };
+  }
+}
+```
