@@ -1,6 +1,6 @@
 A collection of small React Component helpers
 
-## @pure decorator
+## @pure
 
 mark a Component as pure (perf)
 
