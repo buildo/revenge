@@ -11,7 +11,7 @@ import { pure } from 'revenge';
 class UserCard extends React.Component {}
 ```
 
-## @skinnable
+## @skinnable()
 
 split logic and rendering (testability)
 
@@ -33,3 +33,7 @@ class UserCard extends React.Component {
 
 }
 ```
+
+## @skinnable(contains(Component))
+
+wrap "template" components in a "smart/container" component
