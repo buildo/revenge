@@ -1,17 +1,9 @@
 import t from 'tcomb';
 import isReactComponent from '../isReactComponent';
+import { logAvoidableReRenders } from './pureLog';
 import debug from 'debug';
-import isEqual from 'lodash/isEqual';
 
-const testLogsMap = {};
 const log = debug('revenge:@pure');
-const logTest = (rootNodeID, displayName, key) => {
-  const component = `${displayName}-${rootNodeID}`;
-  if (!testLogsMap[component]) {
-    testLogsMap[component] = true;
-    console.warn(`Update avoidable! (component: ${displayName}, key: ${key}, rootNodeID: ${rootNodeID})`);
-  }
-};
 
 // export for tests
 export function shallowEqual(objA, objB, section, component) {
@@ -31,8 +23,6 @@ export function shallowEqual(objA, objB, section, component) {
     return false;
   }
 
-  const deepEqual = (process.env.NODE_ENV === 'test') && isEqual(objA, objB);
-
   let key;
   // Test for A's keys different from B.
   for (key in objA) {
@@ -40,9 +30,6 @@ export function shallowEqual(objA, objB, section, component) {
         (!objB.hasOwnProperty(key) || objA[key] !== objB[key])) {
       if (process.env.NODE_ENV !== 'production') {
         log(`component ${displayName} with rootNodeID ${rootNodeID} will re-render since ${section} key ${key} is changed from `, objA[key], ' to ', objB[key]);
-      }
-      if (process.env.NODE_ENV === 'test' && deepEqual) {
-        logTest(rootNodeID, displayName, key);
       }
       return false;
     }
@@ -52,9 +39,6 @@ export function shallowEqual(objA, objB, section, component) {
     if (objB.hasOwnProperty(key) && !objA.hasOwnProperty(key)) {
       if (process.env.NODE_ENV !== 'production') {
         log(`component ${displayName} with rootNodeID ${rootNodeID} will re-render since ${section} key ${key} with value `, objB[key], 'is new');
-      }
-      if (process.env.NODE_ENV === 'test' && deepEqual) {
-        logTest(rootNodeID, displayName, key);
       }
       return false;
     }
@@ -72,6 +56,9 @@ export default function pure(Component) {
 
   Component.prototype.shouldComponentUpdate = function(nextProps, nextState) {
     const _scu = () => {
+      if (pure.pureLog && process.env.NODE_ENV !== 'production') {
+        logAvoidableReRenders(nextProps, nextState, this);
+      }
       return !shallowEqual(this.props, nextProps, 'props', this) ||
              !shallowEqual(this.state, nextState, 'state', this);
     };
