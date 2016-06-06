@@ -32,14 +32,18 @@ function _logAvoidableReRenders(objA, objB, section, component) {
   // Test for A's keys different from B.
   for (key in objA) {
     if (objA.hasOwnProperty(key) && (!objB.hasOwnProperty(key) || objA[key] !== objB[key])) {
-      log(rootNodeID, displayName, key);
+      if (deepEqual) {
+        log(rootNodeID, displayName, key);
+      }
       return true;
     }
   }
   // Test for B's keys missing from A.
   for (key in objB) {
     if (objB.hasOwnProperty(key) && !objA.hasOwnProperty(key)) {
-      log(rootNodeID, displayName, key);
+      if (deepEqual) {
+        log(rootNodeID, displayName, key);
+      }
       return true;
     }
   }
