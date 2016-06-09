@@ -1,3 +1,5 @@
+import React from 'react';
+
 // to be passed as template to @skinnable
 // e.g @skinnable(contains(Component))
 
