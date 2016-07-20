@@ -1,5 +1,7 @@
 import t from 'tcomb';
+import omit from 'lodash/omit';
 import isReactComponent from '../isReactComponent';
+import { shallowEqual } from './pure';
 
 const defaultGetLocals = function(props) {
   return props;
@@ -31,8 +33,21 @@ export default function skinnable(template?: Function): Function {
       Component.prototype.getLocals = defaultGetLocals;
     }
 
+    const originalCWRP = Component.prototype.componentWillReceiveProps;
+
+    Component.prototype.componentWillReceiveProps = function(nextProps, nextState) {
+      this._refreshLocals = !shallowEqual(
+        omit(nextProps, 'children'),
+        omit(this.props, 'children')
+      );
+      originalCWRP && originalCWRP(nextProps, nextState);
+    }
+
     Component.prototype.render = function () {
-      return this.template(this.getLocals(this.props));
+      if (this._refreshLocals || !this._locals) {
+        this._locals = this.getLocals(this.props);
+      }
+      return this.template({ ...this._locals, children: this.props.children });
     };
   };
 }
