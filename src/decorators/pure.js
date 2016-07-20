@@ -10,13 +10,13 @@ export function shallowEqual(objA, objB, section, component) {
     return true;
   }
 
-  const displayName = component.constructor.name;
-  const rootNodeID = (component._reactInternalInstance || {})._rootNodeID;
+  const displayName = component && component.constructor.name;
+  const rootNodeID = component && (component._reactInternalInstance || {})._rootNodeID;
 
   if (!objA || typeof objA !== 'object') {
     // the opposite should never happen here, since we are using this as
     // `shallowEqual(prevProps, nextProps)` or `shallowEqual(prevState, nextState)`
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== 'production' && section && component) {
       log(`component ${displayName} with rootNodeID ${rootNodeID} will re-render since object has no previous value`);
     }
     return false;
@@ -27,7 +27,7 @@ export function shallowEqual(objA, objB, section, component) {
   for (key in objA) {
     if (objA.hasOwnProperty(key) &&
         (!objB.hasOwnProperty(key) || objA[key] !== objB[key])) {
-      if (process.env.NODE_ENV !== 'production') {
+      if (process.env.NODE_ENV !== 'production' && section && component) {
         log(`component ${displayName} with rootNodeID ${rootNodeID} will re-render since ${section} key ${key} is changed from `, objA[key], ' to ', objB[key]);
       }
       return false;
@@ -36,7 +36,7 @@ export function shallowEqual(objA, objB, section, component) {
   // Test for B's keys missing from A.
   for (key in objB) {
     if (objB.hasOwnProperty(key) && !objA.hasOwnProperty(key)) {
-      if (process.env.NODE_ENV !== 'production') {
+      if (process.env.NODE_ENV !== 'production' && section && component) {
         log(`component ${displayName} with rootNodeID ${rootNodeID} will re-render since ${section} key ${key} with value `, objB[key], 'is new');
       }
       return false;
