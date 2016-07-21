@@ -33,14 +33,14 @@ export default function skinnable(template?: Function): Function {
       Component.prototype.getLocals = defaultGetLocals;
     }
 
-    const originalCWRP = Component.prototype.componentWillReceiveProps;
+    const originalCWU = Component.prototype.componentWillUpdate;
 
-    Component.prototype.componentWillReceiveProps = function(nextProps, nextState) {
-      this._refreshLocals = !shallowEqual(
-        omit(nextProps, 'children'),
-        omit(this.props, 'children')
+    Component.prototype.componentWillUpdate = function(nextProps, nextState) {
+      this._refreshLocals = (
+        !shallowEqual(omit(nextProps, 'children'), omit(this.props, 'children')) ||
+        !shallowEqual(nextState, this.state)
       );
-      originalCWRP && originalCWRP(nextProps, nextState);
+      originalCWU && originalCWU.call(this, nextProps, nextState);
     }
 
     Component.prototype.render = function () {
