@@ -34,8 +34,8 @@
   },
   "dependencies": {
     "debug": "^2.2.0",
-    "lodash": "^4.6.1",
-    "tcomb": "^3.0.0"
+    "lodash": "^4.13.1",
+    "tcomb": "^3.2.0"
   },
   "peerDependencies": {
     "react": "^0.13.3 || ^0.14"

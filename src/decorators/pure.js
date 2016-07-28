@@ -1,5 +1,6 @@
 import t from 'tcomb';
 import isReactComponent from '../isReactComponent';
+import { logAvoidableReRenders } from './pureLog';
 import debug from 'debug';
 
 const log = debug('revenge:@pure');
@@ -55,6 +56,9 @@ export default function pure(Component) {
 
   Component.prototype.shouldComponentUpdate = function(nextProps, nextState) {
     const _scu = () => {
+      if (pure.pureLog && process.env.NODE_ENV !== 'production') {
+        logAvoidableReRenders(nextProps, nextState, this);
+      }
       return !shallowEqual(this.props, nextProps, 'props', this) ||
              !shallowEqual(this.state, nextState, 'state', this);
     };

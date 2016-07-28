@@ -3,12 +3,43 @@ A collection of small React Component helpers
 ## @pure
 
 mark a Component as pure (perf)
-
+adds a standard `shouldComponentUpdate` implementation:
+```js
+!shallowEqual(props, nextProps) || !shallowEqual(state, nextState)
+```
+Usage:
 ```js
 import { pure } from 'revenge';
 
 @pure // will add a default shouldComponentUpdate implementation
 class UserCard extends React.Component {}
+```
+
+## @pureLog
+
+warns in console for instances where `shouldComponentUpdate` returns true but the update was "avoidable"
+
+i.e. if
+```js
+(!shallowEqual(props, nextProps) && deepEqual(props, nextProps)) ||
+(!shallowEqual(state, nextState) && deepEqual(state, nextState))
+```
+usage
+
+```js
+import { pureLog } from 'revenge';
+
+@pureLog
+class UserCard extends React.Component {}
+```
+
+## pure.pureLog
+You can also turn on "avoidable update" logs for every `@pure` instance, setting globally `pure.pureLog = true;`
+
+Usage:
+```js
+import { pure } from 'revenge';
+pure.pureLog = true;
 ```
 
 ## @skinnable()
