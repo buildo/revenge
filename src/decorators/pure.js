@@ -60,4 +60,6 @@ export default function pure(Component) {
     };
     return originalScu ? originalScu(nextProps, nextState, _scu) : _scu();
   };
+
+  return Component;
 }
