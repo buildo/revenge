@@ -1,3 +1,7 @@
+# DEPRECATED
+
+use `React.PureComponent` and [react-skinnable](https://github.com/buildo/react-skinnable) instead.
+
 A collection of small React Component helpers
 
 ## @pure
